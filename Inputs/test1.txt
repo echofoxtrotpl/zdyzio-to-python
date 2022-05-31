@@ -1,1 +1,4 @@
-a = 5@
+func Funckcja(c: int, d: sting): void {
+    const a = 5@
+    var b = 7@
+}

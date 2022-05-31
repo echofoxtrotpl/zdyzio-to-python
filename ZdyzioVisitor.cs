@@ -1,18 +1,55 @@
+using System.Text;
 using ZdyzioToPython.Content;
 
 namespace ZdyzioToPython;
 
-public class ZdyzioVisitor: ZdyzioBaseVisitor<object?>
+public class ZdyzioVisitor: ZdyzioBaseVisitor<string>
 {
-    private Dictionary<string, object?> Variables = new();
-    public override object? VisitAssignment(ZdyzioParser.AssignmentContext context)
+    public override string VisitProgram(ZdyzioParser.ProgramContext context)
     {
-        var varName = context.IDENTIFIER().GetText();
+        StringBuilder result = new StringBuilder();
 
-        var value = Visit(context.expression());
+        var processedFunctions = 0;
+        var processedStatements = 0;
 
-        Variables[varName] = value;
+        for (int i = 0; i < context.ChildCount - 1; ++i)
+        {
+            if (context.GetChild(i).GetText().StartsWith(PytonTokens.FUNC))
+                result.Append(VisitFunctionDeclaration(context.functionDeclaration(processedFunctions)));
+            else
+                result.Append(VisitStatementList(context.statementList(processedStatements)));
+        }
 
-        return value;
+        result.Append(PytonTokens.NEWLINE);
+        return result.ToString();
+    }
+
+    public override string VisitFunctionDeclaration(ZdyzioParser.FunctionDeclarationContext context)
+    {
+        var parameters = context.parameterList() is not null ? VisitParameterList(context.parameterList()) : "";
+        return $"def {context.IDENTIFIER().GetText()}({parameters}):\n{VisitBlock(context.block())}";
+    }
+
+    public override string VisitParameterList(ZdyzioParser.ParameterListContext context)
+    {
+        StringBuilder parameters = new StringBuilder();
+        foreach (var i in context.IDENTIFIER())
+        {
+            parameters.Append($"{i.GetText()}, ");
+        }
+
+        parameters.Remove(parameters.Length - 2, 2);
+        return parameters.ToString();
+    }
+
+    public override string VisitBlock(ZdyzioParser.BlockContext context)
+    {
+        StringBuilder block = new StringBuilder();
+        foreach (var s in context.statementList().statement())
+        {
+            block.Append($"\t{VisitStatement(s)}");
+        }
+
+        return block.ToString();
     }
 }

@@ -6,11 +6,11 @@ grammar Zdyzio;
 
 program: (functionDeclaration | statementList)+ EOF;
 
-functionDeclaration: FUNC IDENTIFIER LEFT_PARENTHESIS parameterList? COLON functionType RIGHT_PARENTHESIS block;
+functionDeclaration: FUNC IDENTIFIER LEFT_PARENTHESIS parameterList? RIGHT_PARENTHESIS COLON functionType block;
 
 functionType: type | VOID;
 
-parameterList: type IDENTIFIER (COMMA type IDENTIFIER)*;
+parameterList: IDENTIFIER COLON type (COMMA IDENTIFIER COLON type)*;
 
 block: LEFT_CURLY_BRACKET statementList RIGHT_CURLY_BRACKET;
 
