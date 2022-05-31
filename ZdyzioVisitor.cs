@@ -115,4 +115,45 @@ public class ZdyzioVisitor: ZdyzioBaseVisitor<string>
         
         return $"{context.IDENTIFIER().GetText()} = False\n";
     }
+    
+    public override string VisitArithmeticExpression(ZdyzioParser.ArithmeticExpressionContext context)
+    {
+        Operators opToReturn = new Operators();
+        var left = Visit(context.primary(0));
+        var right = Visit(context.primary(1));
+
+        var op = context.arithmeticOperator().GetText();
+
+        return op switch
+        {
+            "*" => opToReturn.Multiply(left, right),
+            "/" => opToReturn.Divide(left, right),
+            "%" => opToReturn.Modulo(left, right),
+            "+" => opToReturn.Add(left, right),
+            "-" => opToReturn.Substract(left, right),
+            "^" => opToReturn.Exponent(left, right),
+            _ => throw new NotImplementedException()
+        };
+    }
+
+    public override string VisitComparationExpression(ZdyzioParser.ComparationExpressionContext context)
+    {
+        Comparators comToReturn = new Comparators();
+
+        var left = Visit(context.primary(0));
+        var right = Visit(context.primary(1));
+
+        var com = context.comparationOperator().GetText();
+
+        return com switch
+        {
+            "<=" => comToReturn.LessThanOrEqual(left, right),
+            ">=" => comToReturn.GreaterThanOrEqual(left, right),
+            ">" => comToReturn.GreaterThan(left, right),
+            "<" => comToReturn.LessThan(left, right),
+            "==" => comToReturn.Equal(left, right),
+            "!=" => comToReturn.NotEqual(left, right),
+            _ => throw new NotImplementedException()
+        };
+    }
 }
