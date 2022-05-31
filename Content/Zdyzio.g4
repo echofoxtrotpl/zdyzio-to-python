@@ -6,9 +6,7 @@ grammar Zdyzio;
 
 program: (functionDeclaration | statementList)+ EOF;
 
-functionDeclaration: accessModifier functionType IDENTIFIER LEFT_PARENTHESIS parameterList? RIGHT_PARENTHESIS block;
-
-accessModifier: PRIVATE | PUBLIC;
+functionDeclaration: FUNC IDENTIFIER LEFT_PARENTHESIS parameterList? COLON functionType RIGHT_PARENTHESIS block;
 
 functionType: type | VOID;
 
@@ -25,6 +23,7 @@ statement:
 	| RETURN expression? AT
 	| BREAK AT
 	| variableDeclaration AT
+	| constantDeclaration AT
 	| functionCall AT;
 
 assignment: IDENTIFIER ASSIGN_OPERATOR expression;
@@ -32,6 +31,7 @@ assignment: IDENTIFIER ASSIGN_OPERATOR expression;
 expression:
 	| arithmeticExpression
 	| logicExpression
+	| comparationExpression
 	| primary
 	| functionCall;
 	
@@ -62,22 +62,30 @@ arithmeticOperator:
 logicExpression:
     primary logicOperator primary
     | NEGATION_OPERATOR LEFT_PARENTHESIS primary logicOperator primary RIGHT_PARENTHESIS;
+    
+comparationExpression:
+    primary comparationOperator primary
+    | NEGATION_OPERATOR LEFT_PARENTHESIS primary comparationOperator primary RIGHT_PARENTHESIS;
 
 logicOperator:
+    AND_OPERATOR 
+    | OR_OPERATOR;
+    
+comparationOperator:
     LESS_THAN_OR_EQUAL_OPERATOR 
     | GRATER_THAN_OR_EQUAL_OPERATOR 
     | GRATER_THAN_OPERATOR 
     | LESS_THAN_OPERATOR 
     | EQUAL_OPERATOR 
-    | NOT_EQUAL_OPERATOR 
-    | AND_OPERATOR 
-    | OR_OPERATOR;
+    | NOT_EQUAL_OPERATOR;
 
 functionCall: IDENTIFIER LEFT_PARENTHESIS argumentList? RIGHT_PARENTHESIS;
 
 argumentList: (IDENTIFIER | literal) (COMMA (IDENTIFIER | literal))*;
 
-variableDeclaration: type IDENTIFIER (ASSIGN_OPERATOR (expression | functionCall))?;
+variableDeclaration: VAR IDENTIFIER COLON type (ASSIGN_OPERATOR (expression | functionCall))?;
+
+constantDeclaration: CONST IDENTIFIER COLON type (ASSIGN_OPERATOR (expression | functionCall))?;
 
 type:
     BOOLEAN
@@ -90,6 +98,10 @@ type:
  * Lexer rules
  */
 
+COLON: ':';
+VAR: 'var';
+CONST: 'const';
+FUNC: 'func';
 LEFT_PARENTHESIS: '(';
 RIGHT_PARENTHESIS: ')';
 LEFT_CURLY_BRACKET: '{';
@@ -124,8 +136,6 @@ IF: 'if';
 WHILE: 'while';
 BREAK: 'break';
 RETURN: 'return';
-PRIVATE: 'private';
-PUBLIC: 'public';
 TRUE_LITERAL: 'true';
 FALSE_LITERAL: 'false';
 NULL_LITERAL: 'null';
