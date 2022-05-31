@@ -52,4 +52,67 @@ public class ZdyzioVisitor: ZdyzioBaseVisitor<string>
 
         return block.ToString();
     }
+
+    public override string VisitStatement(ZdyzioParser.StatementContext context)
+    {
+        //TODO: if else
+        //TODO: while
+        
+        if (context.assignment() is not null)
+            return VisitAssignment(context.assignment());
+
+        if (context.RETURN() is not null)
+        {
+            var expression = context.expression();
+            if (expression is null)
+                return "return\n";
+            return $"return {VisitExpression(expression)}\n";
+        }
+        
+        if (context.BREAK() is not null)
+            return "break";
+        
+        if (context.variableDeclaration() is not null)
+            return VisitVariableDeclaration(context.variableDeclaration());
+
+        if (context.constantDeclaration() is not null)
+            return VisitConstantDeclaration(context.constantDeclaration());
+
+        if (context.functionCall() is not null)
+            return VisitFunctionCall(context.functionCall());
+
+        return "";
+    }
+
+    public override string VisitConstantDeclaration(ZdyzioParser.ConstantDeclarationContext context)
+    {
+        if(context.expression() is not null)
+            return $"{context.IDENTIFIER().GetText()} = {VisitExpression(context.expression())}\n";
+        
+        return $"{context.IDENTIFIER().GetText()} = {VisitFunctionCall(context.functionCall())}\n";
+    }
+
+    public override string VisitVariableDeclaration(ZdyzioParser.VariableDeclarationContext context)
+    {
+        if (context.ASSIGN_OPERATOR() is not null)
+        {
+            if(context.expression() is not null)
+                return $"{context.IDENTIFIER().GetText()} = {VisitExpression(context.expression())}\n";
+        
+            return $"{context.IDENTIFIER().GetText()} = {VisitFunctionCall(context.functionCall())}\n";
+        }
+        if(context.type().STRING() is not null)
+            return $"{context.IDENTIFIER().GetText()} = \"\"\n";
+        
+        if(context.type().INT() is not null)
+            return $"{context.IDENTIFIER().GetText()} = 0\n";
+        
+        if(context.type().FLOAT() is not null)
+            return $"{context.IDENTIFIER().GetText()} = 0.0\n";
+        
+        if(context.type().CHAR() is not null)
+            return $"{context.IDENTIFIER().GetText()} = \'\'\n";
+        
+        return $"{context.IDENTIFIER().GetText()} = False\n";
+    }
 }

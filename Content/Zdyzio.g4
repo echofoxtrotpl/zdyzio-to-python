@@ -18,8 +18,8 @@ statementList: statement+;
 
 statement:
     assignment AT
-	| IF LEFT_PARENTHESIS logicExpression RIGHT_PARENTHESIS block (ELSE block)?
-	| WHILE LEFT_PARENTHESIS logicExpression RIGHT_PARENTHESIS block
+	| IF LEFT_PARENTHESIS (logicExpression | comparationExpression) RIGHT_PARENTHESIS block (ELSE block)?
+	| WHILE LEFT_PARENTHESIS (logicExpression | comparationExpression) RIGHT_PARENTHESIS block
 	| RETURN expression? AT
 	| BREAK AT
 	| variableDeclaration AT
@@ -85,7 +85,7 @@ argumentList: (IDENTIFIER | literal) (COMMA (IDENTIFIER | literal))*;
 
 variableDeclaration: VAR IDENTIFIER COLON type (ASSIGN_OPERATOR (expression | functionCall))?;
 
-constantDeclaration: CONST IDENTIFIER COLON type (ASSIGN_OPERATOR (expression | functionCall))?;
+constantDeclaration: CONST IDENTIFIER COLON type ASSIGN_OPERATOR (expression | functionCall);
 
 type:
     BOOLEAN
