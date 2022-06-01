@@ -55,11 +55,64 @@ public class ZdyzioVisitor: ZdyzioBaseVisitor<string>
 
     public override string VisitStatement(ZdyzioParser.StatementContext context)
     {
-        //TODO: if else
-        //TODO: while
-        
         if (context.assignment() is not null)
             return VisitAssignment(context.assignment());
+        //TODO: if else
+        //TODO: while
+        if (context.WHILE() is not null)
+        {
+            Func<object?, bool> condition = context.WHILE().GetText() == "while"
+                ? IsTrue
+                : IsFalse
+            ;
+
+            if(context.LEFT_PARENTHESIS() is not null)
+            {
+                bool checker = false;
+                if(condition(VisitLogicExpression(context.logicExpression()))
+                    || condition(VisitComparationExpression(context.comparationExpression())))
+                {
+                    checker = true;
+                }
+                if(context.RIGHT_PARENTHESIS() is not null && checker)
+                {
+                    do
+                    {
+                        // tu nie wiem co zrobic
+                        VisitBlock(context.block());
+                    }while(condition(VisitLogicExpression(context.logicExpression())) 
+                    || condition(VisitComparationExpression(context.comparationExpression())));
+                }
+            }
+        }
+
+        if(context.IF() is not null)
+        {
+            Func<object?, bool> condition = context.IF().GetText() == "if"
+                ? IsTrue
+                : IsFalse
+            ;
+            //tu chyba juz całkowicie pomieszałem
+            if(context.LEFT_PARENTHESIS() is not null)
+            {
+                bool checker = false;
+
+                if(condition(VisitLogicExpression(context.logicExpression()))
+                    || condition(VisitComparationExpression(context.comparationExpression())))
+                {
+                    checker = true;
+                }
+
+                if(context.RIGHT_PARENTHESIS() is not null && checker)
+                {
+                    VisitBlock(context.block());
+                }
+                else if(context.RIGHT_PARENTHESIS() is not null && context.ELSE() is not null && !checker)
+                {
+                    VisitBlock(context.block());
+                }
+            }
+        }
 
         if (context.RETURN() is not null)
         {
@@ -83,6 +136,16 @@ public class ZdyzioVisitor: ZdyzioBaseVisitor<string>
 
         return "";
     }
+    private bool IsTrue(object? value)
+    {
+        if(value is bool b)
+        {
+            return b;
+        }
+        throw new Exception("Value is not boolean");
+    }
+
+    private bool IsFalse(object? value) => !IsTrue(value); 
 
     public override string VisitConstantDeclaration(ZdyzioParser.ConstantDeclarationContext context)
     {
@@ -157,3 +220,4 @@ public class ZdyzioVisitor: ZdyzioBaseVisitor<string>
         };
     }
 }
+
