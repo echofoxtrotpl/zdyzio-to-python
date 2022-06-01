@@ -15,9 +15,15 @@ public class ZdyzioVisitor: ZdyzioBaseVisitor<string>
         for (int i = 0; i < context.ChildCount - 1; ++i)
         {
             if (context.GetChild(i).GetText().StartsWith(PytonTokens.FUNC))
+            {
                 result.Append(VisitFunctionDeclaration(context.functionDeclaration(processedFunctions)));
+                processedFunctions++;
+            }
             else
+            {
                 result.Append(VisitStatementList(context.statementList(processedStatements)));
+                processedStatements++;
+            }
         }
 
         result.Append(PytonTokens.NEWLINE);
@@ -27,7 +33,7 @@ public class ZdyzioVisitor: ZdyzioBaseVisitor<string>
     public override string VisitFunctionDeclaration(ZdyzioParser.FunctionDeclarationContext context)
     {
         var parameters = context.parameterList() is not null ? VisitParameterList(context.parameterList()) : "";
-        return $"def {context.IDENTIFIER().GetText()}({parameters}):\n{VisitBlock(context.block())}";
+        return $"def {context.IDENTIFIER().GetText()}({parameters}):\n{VisitBlock(context.block())}\n";
     }
 
     public override string VisitParameterList(ZdyzioParser.ParameterListContext context)
@@ -85,7 +91,7 @@ public class ZdyzioVisitor: ZdyzioBaseVisitor<string>
         }
         
         if (context.BREAK() is not null)
-            return "break";
+            return "break\n";
         
         if (context.variableDeclaration() is not null)
             return VisitVariableDeclaration(context.variableDeclaration());
@@ -101,22 +107,19 @@ public class ZdyzioVisitor: ZdyzioBaseVisitor<string>
 
     public override string VisitAssignment(ZdyzioParser.AssignmentContext context)
     {
-        return $"{context.IDENTIFIER().GetText()} = {VisitExpression(context.expression())}";
+        return $"{context.IDENTIFIER().GetText()} = {VisitExpression(context.expression())}\n";
     }
 
     public override string VisitConstantDeclaration(ZdyzioParser.ConstantDeclarationContext context)
     {
-        return $"{context.IDENTIFIER().GetText()} = {VisitExpression(context.expression())}";
+        return $"{context.IDENTIFIER().GetText()} = {VisitExpression(context.expression())}\n";
     }
 
     public override string VisitVariableDeclaration(ZdyzioParser.VariableDeclarationContext context)
     {
         if (context.ASSIGN_OPERATOR() is not null)
         {
-            if(context.expression() is not null)
-                return $"{context.IDENTIFIER().GetText()} = {VisitExpression(context.expression())}\n";
-        
-            //return $"{context.IDENTIFIER().GetText()} = {VisitFunctionCall(context.functionCall())}\n";
+            return $"{context.IDENTIFIER().GetText()} = {VisitExpression(context.expression())}\n";
         }
         if(context.type().STRING() is not null)
             return $"{context.IDENTIFIER().GetText()} = \"\"\n";
@@ -136,6 +139,22 @@ public class ZdyzioVisitor: ZdyzioBaseVisitor<string>
     public override string VisitArithmeticExpression(ZdyzioParser.ArithmeticExpressionContext context)
     {
         return $"{VisitPrimary(context.primary(0))} {VisitArithmeticOperator(context.arithmeticOperator())} {VisitPrimary(context.primary(1))}";
+    }
+
+    public override string VisitArithmeticOperator(ZdyzioParser.ArithmeticOperatorContext context)
+    {
+        if (context.MULTIPLICATION_OPERATOR() is not null)
+            return context.MULTIPLICATION_OPERATOR().GetText();
+        if (context.DIVISION_OPERATOR() is not null)
+            return context.DIVISION_OPERATOR().GetText();
+        if (context.MODULO_OPERATOR() is not null)
+            return context.MODULO_OPERATOR().GetText();
+        if (context.ADDITION_OPERATOR() is not null)
+            return context.ADDITION_OPERATOR().GetText();
+        if (context.SUBTRACTION_OPERATOR() is not null)
+            return context.SUBTRACTION_OPERATOR().GetText();
+        
+        return "**";
     }
 
     public override string VisitType(ZdyzioParser.TypeContext context)

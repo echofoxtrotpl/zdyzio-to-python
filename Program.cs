@@ -13,4 +13,5 @@ var zdyzioParser = new ZdyzioParser(commonTokenStream);
 var zdyzioContext = zdyzioParser.program();
 var visitor = new ZdyzioVisitor();
 
-visitor.Visit(zdyzioContext);
+var result = visitor.Visit(zdyzioContext);
+Console.WriteLine(result);
