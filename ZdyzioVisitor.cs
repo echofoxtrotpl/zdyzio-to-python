@@ -141,16 +141,52 @@ public class ZdyzioVisitor: ZdyzioBaseVisitor<string>
         return $"{VisitPrimary(context.primary(0))} {VisitArithmeticOperator(context.arithmeticOperator())} {VisitPrimary(context.primary(1))}";
     }
 
+    public override string VisitComparationExpression(ZdyzioParser.ComparationExpressionContext context)
+    {
+        if (context.NEGATION_OPERATOR() is null)
+        {
+            return $"{VisitPrimary(context.primary(0))} {VisitComparationOperator(context.comparationOperator())} {VisitPrimary(context.primary(1))}";
+        }
+        
+        //TODO: with negation
+        return "";
+    }
+
+    public override string VisitComparationOperator(ZdyzioParser.ComparationOperatorContext context)
+    {
+        if (context.LESS_THAN_OR_EQUAL_OPERATOR() is not null)
+            return context.LESS_THAN_OR_EQUAL_OPERATOR().GetText();
+        
+        if (context.GRATER_THAN_OR_EQUAL_OPERATOR() is not null)
+            return context.GRATER_THAN_OR_EQUAL_OPERATOR().GetText();
+        
+        if (context.GRATER_THAN_OPERATOR() is not null)
+            return context.GRATER_THAN_OPERATOR().GetText();
+        
+        if (context.LESS_THAN_OPERATOR() is not null)
+            return context.LESS_THAN_OPERATOR().GetText();
+        
+        if (context.EQUAL_OPERATOR() is not null)
+            return context.EQUAL_OPERATOR().GetText();
+        
+        return "!=";
+    }
+
+
     public override string VisitArithmeticOperator(ZdyzioParser.ArithmeticOperatorContext context)
     {
         if (context.MULTIPLICATION_OPERATOR() is not null)
             return context.MULTIPLICATION_OPERATOR().GetText();
+        
         if (context.DIVISION_OPERATOR() is not null)
             return context.DIVISION_OPERATOR().GetText();
+        
         if (context.MODULO_OPERATOR() is not null)
             return context.MODULO_OPERATOR().GetText();
+        
         if (context.ADDITION_OPERATOR() is not null)
             return context.ADDITION_OPERATOR().GetText();
+        
         if (context.SUBTRACTION_OPERATOR() is not null)
             return context.SUBTRACTION_OPERATOR().GetText();
         
