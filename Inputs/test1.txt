@@ -16,4 +16,8 @@ func PrzekazParametr(a: int) : int {
     return b@
 }
 
+var b: float@
 
+func CzyMniejszeRowne(a: int, b: float) : bool {
+    return a <= b@
+}
