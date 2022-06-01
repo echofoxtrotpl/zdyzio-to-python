@@ -83,9 +83,9 @@ functionCall: IDENTIFIER LEFT_PARENTHESIS argumentList? RIGHT_PARENTHESIS;
 
 argumentList: (IDENTIFIER | literal) (COMMA (IDENTIFIER | literal))*;
 
-variableDeclaration: VAR IDENTIFIER COLON type (ASSIGN_OPERATOR (expression | functionCall))?;
+variableDeclaration: VAR IDENTIFIER COLON type (ASSIGN_OPERATOR expression)? AT;
 
-constantDeclaration: CONST IDENTIFIER COLON type ASSIGN_OPERATOR (expression | functionCall);
+constantDeclaration: CONST IDENTIFIER COLON type ASSIGN_OPERATOR expression AT;
 
 type:
     BOOLEAN
