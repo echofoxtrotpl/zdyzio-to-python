@@ -60,16 +60,19 @@ arithmeticOperator:
     | EXPONENTIATION_OPERATOR;
 
 logicExpression:
-    primary logicOperator primary
-    | NEGATION_OPERATOR LEFT_PARENTHESIS primary logicOperator primary RIGHT_PARENTHESIS;
+    LEFT_PARENTHESIS logicExpression RIGHT_PARENTHESIS
+    | NEGATION_OPERATOR logicExpression
+    | comparationExpression logicOperator comparationExpression
+    | primary logicOperator primary;
     
 comparationExpression:
-    primary comparationOperator primary
-    | NEGATION_OPERATOR LEFT_PARENTHESIS primary comparationOperator primary RIGHT_PARENTHESIS;
+    NEGATION_OPERATOR comparationExpression
+    | primary comparationOperator primary;
 
 logicOperator:
     AND_OPERATOR 
-    | OR_OPERATOR;
+    | OR_OPERATOR
+    | NEGATION_OPERATOR;
     
 comparationOperator:
     LESS_THAN_OR_EQUAL_OPERATOR 

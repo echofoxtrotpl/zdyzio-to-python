@@ -12,28 +12,39 @@ public class ZdyzioVisitor: ZdyzioBaseVisitor<string>
         var processedFunctions = 0;
         var processedStatements = 0;
 
-        for (int i = 0; i < context.ChildCount - 1; ++i)
+        foreach (var c in context.children)
         {
-            if (context.GetChild(i).GetText().StartsWith(PytonTokens.FUNC))
+            var child = c.GetText();
+            if (child.StartsWith("func"))
             {
                 result.Append(VisitFunctionDeclaration(context.functionDeclaration(processedFunctions)));
                 processedFunctions++;
             }
-            else
+            else if (!child.Equals("<EOF>"))
             {
                 result.Append(VisitStatementList(context.statementList(processedStatements)));
                 processedStatements++;
             }
+            result.Append("\n");
         }
-
-        result.Append(PytonTokens.NEWLINE);
         return result.ToString();
+    }
+
+    public override string VisitStatementList(ZdyzioParser.StatementListContext context)
+    {
+        StringBuilder statements = new StringBuilder();
+        foreach (var s in context.statement())
+        {
+            statements.Append(VisitStatement(s));
+        }
+        
+        return statements.ToString();
     }
 
     public override string VisitFunctionDeclaration(ZdyzioParser.FunctionDeclarationContext context)
     {
         var parameters = context.parameterList() is not null ? VisitParameterList(context.parameterList()) : "";
-        return $"def {context.IDENTIFIER().GetText()}({parameters}):\n{VisitBlock(context.block())}\n";
+        return $"def {context.IDENTIFIER().GetText()}({parameters}):\n{VisitBlock(context.block())}";
     }
 
     public override string VisitParameterList(ZdyzioParser.ParameterListContext context)
@@ -50,8 +61,29 @@ public class ZdyzioVisitor: ZdyzioBaseVisitor<string>
 
     public override string VisitArgumentList(ZdyzioParser.ArgumentListContext context)
     {
-        //TODO: 
-        return "";
+        StringBuilder arguments = new StringBuilder();
+
+        var processedIdentifiers = 0;
+        var processedLiterals = 0;
+
+        foreach (var c in context.children)
+        {
+            var child = c.GetText();
+
+            if(!child.Equals(",")) {
+                if (!char.IsDigit(child[0]) && !child.StartsWith("\"") && !child.StartsWith("'")) {
+                    arguments.Append(context.IDENTIFIER(processedIdentifiers));
+                    processedIdentifiers++;
+                } else {
+                    arguments.Append(VisitLiteral(context.literal(processedLiterals)));
+                    processedLiterals++;
+                }
+                arguments.Append(", ");
+            }
+        }
+        
+        arguments.Remove(arguments.Length - 2, 2);
+        return arguments.ToString();
     }
 
     public override string VisitBlock(ZdyzioParser.BlockContext context)
@@ -143,13 +175,26 @@ public class ZdyzioVisitor: ZdyzioBaseVisitor<string>
 
     public override string VisitComparationExpression(ZdyzioParser.ComparationExpressionContext context)
     {
-        if (context.NEGATION_OPERATOR() is null)
+        var negation = context.NEGATION_OPERATOR() is null ? "" : "not ";
+        return $"{negation}{VisitPrimary(context.primary(0))} {VisitComparationOperator(context.comparationOperator())} {VisitPrimary(context.primary(1))}";
+    }
+
+    public override string VisitLogicExpression(ZdyzioParser.LogicExpressionContext context)
+    {
+        var negation = context.NEGATION_OPERATOR() is null ? "" : "not ";
+        if (context.LEFT_PARENTHESIS() is not null)
         {
-            return $"{VisitPrimary(context.primary(0))} {VisitComparationOperator(context.comparationOperator())} {VisitPrimary(context.primary(1))}";
+            return $"{negation}{VisitComparationExpression(context.logicExpression().comparationExpression(0))} {VisitLogicOperator(context.logicExpression().logicOperator())} {VisitComparationExpression(context.logicExpression().comparationExpression(1))}";
         }
+        return $"{negation}{VisitPrimary(context.primary(0))} {VisitLogicOperator(context.logicOperator())} {VisitPrimary(context.primary(1))}";
+    }
+
+    public override string VisitLogicOperator(ZdyzioParser.LogicOperatorContext context)
+    {
+        if (context.AND_OPERATOR() is not null)
+            return "and";
         
-        //TODO: with negation
-        return "";
+        return "or";
     }
 
     public override string VisitComparationOperator(ZdyzioParser.ComparationOperatorContext context)
@@ -242,9 +287,9 @@ public class ZdyzioVisitor: ZdyzioBaseVisitor<string>
 
     public override string VisitFunctionCall(ZdyzioParser.FunctionCallContext context)
     {
-        //var arguments = context.argumentList() is not null ? VisitArgumentList(context.argumentList()) : "";
-        //TODO: Function call
-        return "";
+        var arguments = context.argumentList() is not null ? VisitArgumentList(context.argumentList()) : "";
+        
+        return $"{context.IDENTIFIER()}({arguments})\n";
     }
 }
 

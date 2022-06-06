@@ -6,18 +6,19 @@ func Potegowanie(c: float, d: float): float {
     return c^d@
 }
 
-const a: string = "stała a"@
-
 func PrzekazParametr(a: int) : int {
     var b: int@
-
-    b = a@
     
     return b@
 }
 
 var b: float@
 
-func CzyMniejszeRowne(a: int, b: float) : bool {
+func CzyMniejszeRowne(a: int, b: float) : boolean {
     return a <= b@
 }
+
+b = (3 <= 5 && a < c)@
+
+b = 3 <= 5@
+b = 3 <= 5@

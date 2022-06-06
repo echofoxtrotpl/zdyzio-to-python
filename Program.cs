@@ -2,7 +2,7 @@
 using ZdyzioToPython;
 using ZdyzioToPython.Content;
 
-var fileName = "Inputs/test1.txt";
+var fileName = @"Inputs/test1.txt";
 
 var fileContents = File.ReadAllText(fileName);
 
@@ -14,4 +14,7 @@ var zdyzioContext = zdyzioParser.program();
 var visitor = new ZdyzioVisitor();
 
 var result = visitor.Visit(zdyzioContext);
+
+File.WriteAllText(@"result.py",result);
+
 Console.WriteLine(result);
