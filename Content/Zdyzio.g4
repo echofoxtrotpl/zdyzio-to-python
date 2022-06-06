@@ -18,8 +18,8 @@ statementList: statement+;
 
 statement:
     assignment AT
-	| IF LEFT_PARENTHESIS (logicExpression | comparationExpression) RIGHT_PARENTHESIS block (ELSE block)?
-	| WHILE LEFT_PARENTHESIS (logicExpression | comparationExpression) RIGHT_PARENTHESIS block
+	| IF LEFT_PARENTHESIS (logicExpression | comparationExpression | primary) RIGHT_PARENTHESIS block (ELSE block)?
+	| WHILE LEFT_PARENTHESIS (logicExpression | comparationExpression | primary) RIGHT_PARENTHESIS block
 	| RETURN expression? AT
 	| BREAK AT
 	| variableDeclaration AT

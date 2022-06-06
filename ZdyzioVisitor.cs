@@ -104,13 +104,18 @@ public class ZdyzioVisitor: ZdyzioBaseVisitor<string>
 
         if (context.WHILE() is not null)
         {
-            //TODO: while
-            return "";
+            if(context.logicExpression() is not null)
+                return $"while {VisitLogicExpression(context.logicExpression())}:\n{VisitBlock(context.block(0))}"; 
+            
+            if(context.primary() is not null)
+                return $"while {VisitPrimary(context.primary())}:\n{VisitBlock(context.block(0))}"; 
+            
+            return $"while {VisitComparationExpression(context.comparationExpression())}:\n{VisitBlock(context.block(0))}";
         }
         
         if (context.IF() is not null)
         {
-            //TODO: if else
+            //TODO: IF ELSE
             return "";
         }
 
@@ -262,9 +267,9 @@ public class ZdyzioVisitor: ZdyzioBaseVisitor<string>
         if (context.CHAR_LITERAL() is not null)
             return context.CHAR_LITERAL().GetText();
         if (context.TRUE_LITERAL() is not null)
-            return context.TRUE_LITERAL().GetText();
+            return "True";
         if (context.FALSE_LITERAL() is not null)
-            return context.FALSE_LITERAL().GetText();
+            return "False";
         return context.STRING_LITERAL().GetText();
     }
 
