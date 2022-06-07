@@ -5,6 +5,8 @@ namespace ZdyzioToPython;
 
 public class ZdyzioVisitor: ZdyzioBaseVisitor<string>
 {
+    private int numberOfIndentations;
+    private bool statementOfIfElse = false;
     public override string VisitProgram(ZdyzioParser.ProgramContext context)
     {
         StringBuilder result = new StringBuilder();
@@ -43,6 +45,7 @@ public class ZdyzioVisitor: ZdyzioBaseVisitor<string>
 
     public override string VisitFunctionDeclaration(ZdyzioParser.FunctionDeclarationContext context)
     {
+        numberOfIndentations++;
         var parameters = context.parameterList() is not null ? VisitParameterList(context.parameterList()) : "";
         return $"def {context.IDENTIFIER().GetText()}({parameters}):\n{VisitBlock(context.block())}";
     }
@@ -91,9 +94,15 @@ public class ZdyzioVisitor: ZdyzioBaseVisitor<string>
         StringBuilder block = new StringBuilder();
         foreach (var s in context.statementList().statement())
         {
-            block.Append($"\t{VisitStatement(s)}");
+            string indentation = new string('\t', numberOfIndentations);
+            block.Append($"{indentation}{VisitStatement(s)}");
         }
-
+        if (statementOfIfElse)
+        {
+            statementOfIfElse = false;
+            return block.ToString();
+        }
+        numberOfIndentations--;
         return block.ToString();
     }
 
@@ -104,7 +113,8 @@ public class ZdyzioVisitor: ZdyzioBaseVisitor<string>
 
         if (context.WHILE() is not null)
         {
-            if(context.logicExpression() is not null)
+            numberOfIndentations++;
+            if (context.logicExpression() is not null)
                 return $"while {VisitLogicExpression(context.logicExpression())}:\n{VisitBlock(context.block(0))}"; 
             
             if(context.primary() is not null)
@@ -112,11 +122,34 @@ public class ZdyzioVisitor: ZdyzioBaseVisitor<string>
             
             return $"while {VisitComparationExpression(context.comparationExpression())}:\n{VisitBlock(context.block(0))}";
         }
-        
+
         if (context.IF() is not null)
         {
+            numberOfIndentations++;
             //TODO: IF ELSE
-            return "";
+            if (context.ELSE() is not null)
+            {
+                string indentation = new string('\t', numberOfIndentations-1);
+                statementOfIfElse = true;
+
+                if (context.logicExpression() is not null)
+                    return $"if {VisitLogicExpression(context.logicExpression())}:\n{VisitBlock(context.block(0))}\n" +
+                           $"{indentation}else:\n{VisitBlock(context.block(1))}";
+                if (context.primary() is not null)
+                    return $"if {VisitPrimary(context.primary())}:\n{VisitBlock(context.block(0))}" +
+                           $"{indentation}else:\n{VisitBlock(context.block(1))}";
+                return $"if {VisitComparationExpression(context.comparationExpression())}:\n{VisitBlock(context.block(0))}" +
+                       $"{indentation}else:\n{VisitBlock(context.block(1))}";
+            }
+            else
+            {
+                //numberOfIndentations++;
+                if (context.logicExpression() is not null)
+                    return $"if {VisitLogicExpression(context.logicExpression())}:\n{VisitBlock(context.block(0))}";
+                if (context.primary() is not null)
+                    return $"if {VisitPrimary(context.primary())}:\n{VisitBlock(context.block(0))}";
+                return $"if {VisitComparationExpression(context.comparationExpression())}:\n{VisitBlock(context.block(0))}";
+            }
         }
 
         if (context.RETURN() is not null)
@@ -297,4 +330,3 @@ public class ZdyzioVisitor: ZdyzioBaseVisitor<string>
         return $"{context.IDENTIFIER()}({arguments})\n";
     }
 }
-
