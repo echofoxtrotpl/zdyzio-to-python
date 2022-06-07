@@ -1,42 +1,16 @@
-while(i < 4)
+func Fib(n: int): int
 {
-    if((5 > j) && (j > -1))
-    {
-        j = j + 2@
-        break@
-    }
-    else
-    {
-        j = j + 3@
-        break@
-    }
-    if((5 > j) && (j > -1))
-    {
-        j = j + 2@
-        break@
-        if((5 > j) && (j > -1))
-        {
-            j = j + 2@
-            break@
-        }
-        else
-        {
-            j = j + 3@
-            break@
-            while(i < 4)
-            {
-                i = i + 1@
-            }
-            break@
-        }
-        break@
-    }
-    break@
-}
-
-func PrzekazParametr(a: int) : int 
-{
-    var b: int@
-    
-    return b@
+	if(n == 0)
+	{
+		return 0@
+	}
+	if(n == 1)
+	{
+		return 1@
+	}
+	var x: int = n-1@
+	var y: int = n-2@
+	var i: int = Fib(x)@
+	var j: int = Fib(y)@
+	return i + j@
 }
