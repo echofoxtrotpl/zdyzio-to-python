@@ -1,31 +1,42 @@
-func Dodawanie(a: int, b: int): int {
-    return a + b@
+while(i < 4)
+{
+    if((5 > j) && (j > -1))
+    {
+        j = j + 2@
+        break@
+    }
+    else
+    {
+        j = j + 3@
+        break@
+    }
+    if((5 > j) && (j > -1))
+    {
+        j = j + 2@
+        break@
+        if((5 > j) && (j > -1))
+        {
+            j = j + 2@
+            break@
+        }
+        else
+        {
+            j = j + 3@
+            break@
+            while(i < 4)
+            {
+                i = i + 1@
+            }
+            break@
+        }
+        break@
+    }
+    break@
 }
 
-func Potegowanie(c: float, d: float): float {
-    return c^d@
-}
-
-func PrzekazParametr(a: int) : int {
+func PrzekazParametr(a: int) : int 
+{
     var b: int@
     
     return b@
-}
-
-var b: float@
-
-func CzyMniejszeRowne(a: int, b: float) : boolean {
-    return a <= b@
-}
-
-b = (3 <= 5 && a < c)@
-
-b = 3 <= 5@
-b = 3 <= 5@
-
-var i: int = 0
-
-while(true){
-    i = i + 1@
-    break@
 }
