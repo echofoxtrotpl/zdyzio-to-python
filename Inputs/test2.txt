@@ -1,0 +1,10 @@
+﻿while(true)
+{
+    i = i + 1@
+    if(true)
+    {
+        i = i * i@
+    }
+    break@
+}
+

@@ -1,0 +1,16 @@
+﻿func Dodawanie(a: int, b: int): int 
+{
+    return a + b@
+}
+
+func Potegowanie(c: float, d: float): float 
+{
+    return c^d@
+}
+
+func PrzekazParametr(a: int) : int 
+{
+    var b: int@
+    
+    return b@
+}
