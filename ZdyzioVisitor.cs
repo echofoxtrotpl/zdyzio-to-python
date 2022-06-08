@@ -126,7 +126,6 @@ public class ZdyzioVisitor: ZdyzioBaseVisitor<string>
         if (context.IF() is not null)
         {
             numberOfIndentations++;
-            //TODO: IF ELSE
             if (context.ELSE() is not null)
             {
                 string indentation = new string('\t', numberOfIndentations-1);
@@ -143,7 +142,6 @@ public class ZdyzioVisitor: ZdyzioBaseVisitor<string>
             }
             else
             {
-                //numberOfIndentations++;
                 if (context.logicExpression() is not null)
                     return $"if {VisitLogicExpression(context.logicExpression())}:\n{VisitBlock(context.block(0))}";
                 if (context.primary() is not null)
