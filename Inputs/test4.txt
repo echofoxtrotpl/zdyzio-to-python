@@ -8,9 +8,11 @@ func Potegowanie(c: float, d: float): float
     return c^d@
 }
 
-func PrzekazParametr(a: int) -> int 
+func PrzekazParametr(a: int): int 
 {
     var b: int@
+    
+    b = a@
     
     return b@
 }

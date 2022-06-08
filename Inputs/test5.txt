@@ -3,7 +3,7 @@ var j: int = 0@
 
 while(i < 4)
 {
-    if((5 > j) || (i < 2))
+    if(5 > j || i < 2)
     {
         j = j + 2@
     }
@@ -11,10 +11,10 @@ while(i < 4)
     {
         j = j + 3@
     }
-    if((5 > j) && (j > -1))
+    if(5 > j && j > 1)
     {
-        j = j + 2@
-        if((5 > j) && (j > -1))
+        j = j - 2@
+        if(5 > j && j > 1)
         {
             j = j + 2@
         }
@@ -29,11 +29,4 @@ while(i < 4)
         }
     }
     i = i + 1@
-}
-
-func PrzekazParametr(a: int) : int 
-{
-    var b: int@
-    
-    return b@
 }

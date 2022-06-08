@@ -2,7 +2,7 @@ using Antlr4.Runtime;
 using ZdyzioToPython;
 using ZdyzioToPython.Content;
 
-for (int i = 1; i < 6; i++)
+for (int i = 1; i < 8; i++)
 {
     var fileName = $@"Inputs/test{i}.txt";
     var fileContents = File.ReadAllText(fileName);

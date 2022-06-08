@@ -6,7 +6,7 @@ namespace ZdyzioToPython;
 public class ZdyzioVisitor: ZdyzioBaseVisitor<string>
 {
     private int numberOfIndentations;
-    private bool statementOfIfElse = false;
+    private bool statementOfIfElse;
     public override string VisitProgram(ZdyzioParser.ProgramContext context)
     {
         StringBuilder result = new StringBuilder();
@@ -132,7 +132,7 @@ public class ZdyzioVisitor: ZdyzioBaseVisitor<string>
                 statementOfIfElse = true;
 
                 if (context.logicExpression() is not null)
-                    return $"if {VisitLogicExpression(context.logicExpression())}:\n{VisitBlock(context.block(0))}\n" +
+                    return $"if {VisitLogicExpression(context.logicExpression())}:\n{VisitBlock(context.block(0))}" +
                            $"{indentation}else:\n{VisitBlock(context.block(1))}";
                 if (context.primary() is not null)
                     return $"if {VisitPrimary(context.primary())}:\n{VisitBlock(context.block(0))}" +
