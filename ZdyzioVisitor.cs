@@ -224,6 +224,11 @@ public class ZdyzioVisitor: ZdyzioBaseVisitor<string>
         {
             return $"{negation}{VisitComparationExpression(context.logicExpression().comparationExpression(0))} {VisitLogicOperator(context.logicExpression().logicOperator())} {VisitComparationExpression(context.logicExpression().comparationExpression(1))}";
         }
+
+        if (context.comparationExpression(0) is not null)
+        {
+            return $"{negation}{VisitComparationExpression(context.comparationExpression(0))} {VisitLogicOperator(context.logicOperator())} {VisitComparationExpression(context.comparationExpression(1))}";
+        }
         return $"{negation}{VisitPrimary(context.primary(0))} {VisitLogicOperator(context.logicOperator())} {VisitPrimary(context.primary(1))}";
     }
 
